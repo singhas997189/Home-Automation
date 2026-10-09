@@ -1,0 +1,13 @@
+{
+  "appId": "com.hearth.home",
+  "appName": "Hearth",
+  "webDir": "www",
+  "backgroundColor": "#0F1219",
+  "server": {
+    "androidScheme": "http",
+    "cleartext": true
+  },
+  "plugins": {
+    "CapacitorHttp": { "enabled": true }
+  }
+}
