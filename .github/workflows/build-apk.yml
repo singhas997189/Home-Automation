@@ -25,6 +25,30 @@ jobs:
         run: |
           M=android/app/src/main/AndroidManifest.xml
           grep -q usesCleartextTraffic "$M" || sed -i 's/<application/<application android:usesCleartextTraffic="true"/' "$M"
+      - name: Generate launcher icon resources
+        run: |
+          mkdir -p android/app/src/main/res/mipmap-anydpi-v26
+          cat > android/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml << 'EOF'
+          <?xml version="1.0" encoding="utf-8"?>
+          <adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
+              <background android:drawable="@color/ic_launcher_bg"/>
+              <foreground android:drawable="@mipmap/ic_launcher_foreground"/>
+          </adaptive-icon>
+          EOF
+          cat > android/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml << 'EOF'
+          <?xml version="1.0" encoding="utf-8"?>
+          <adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
+              <background android:drawable="@color/ic_launcher_bg"/>
+              <foreground android:drawable="@mipmap/ic_launcher_foreground"/>
+          </adaptive-icon>
+          EOF
+          mkdir -p android/app/src/main/res/values
+          cat > android/app/src/main/res/values/colors.xml << 'EOF'
+          <?xml version="1.0" encoding="utf-8"?>
+          <resources>
+              <color name="ic_launcher_bg">#FFFFFF</color>
+          </resources>
+          EOF
       - name: Build APK
         run: |
           cd android
@@ -34,26 +58,3 @@ jobs:
         with:
           name: hearth-apk
           path: android/app/build/outputs/apk/debug/app-debug.apk
-                - name: Ensure Android launcher background exists
-        run: |
-          mkdir -p android/app/src/main/res/values
-          cat > android/app/src/main/res/values/colors.xml <<'EOF'
-          <?xml version="1.0" encoding="utf-8"?>
-          <resources>
-              <color name="ic_launcher_background">#0D9488</color>
-          </resources>
-          EOF
-
-          for f in \
-            android/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml \
-            android/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml; do
-            if [ -f "$f" ]; then
-              cat > "$f" <<'EOF'
-          <?xml version="1.0" encoding="utf-8"?>
-          <adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
-              <background android:drawable="@color/ic_launcher_background"/>
-              <foreground android:drawable="@mipmap/ic_launcher_foreground"/>
-          </adaptive-icon>
-          EOF
-            fi
-          done
